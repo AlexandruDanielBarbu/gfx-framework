@@ -88,10 +88,12 @@ vec3 SpotLight()
         float linear_att = (spot_light - spot_light_limit) / (1.0f - spot_light_limit);
         float light_att_factor = pow(linear_att, 2);
 
-        // TODO(student): Multiply the shadow factor with the
+        // Multiply the shadow factor with the
         // result of the lighting calculation. Don't apply
         // this factor to the ambient component as well.
-        return light_att_factor * light_intensity * PhongLight() * ShadowFactor() + KA;
+        float shadow = ShadowFactor();
+        vec3 shadow_color = mix(vec3(1, 0.0, 1.0), vec3(1,0), shadow);
+        return shadow_color * light_att_factor * light_intensity * PhongLight() + KA;
     }
 
     return KA;
