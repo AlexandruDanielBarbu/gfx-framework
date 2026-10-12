@@ -146,7 +146,7 @@ void Lab2::Update(float deltaTimeSeconds)
         {
             auto model = glm::translate(glm::mat4(1), l.position);
             model = glm::scale(model, glm::vec3(0.2f));
-            RenderMesh(meshes["sphere"], shader, model);
+            //RenderMesh(meshes["sphere"], shader, model);
         }
 
         TextureManager::GetTexture("ground.jpg")->BindToTextureUnit(GL_TEXTURE0);
