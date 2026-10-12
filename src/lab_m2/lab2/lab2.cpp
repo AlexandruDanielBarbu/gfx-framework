@@ -86,16 +86,16 @@ void Lab2::Init()
     {
         LightInfo lightInfo;
 
-        // TODO(student): Set lightInfo with random position, random color
+        // [DONE] TODO(student): Set lightInfo with random position, random color
         // and a random radius for each light source.
         // You can use the Rand01 function defined above.
         // The chosen position is between (-10, 0, -10) and (10, 3, 10)
         // The chosen color is between (0, 0, 0) and (1, 1, 1).
         // The chosen radius is between 3 and 4.
 
-        lightInfo.position = glm::vec3(0.0f);
-        lightInfo.color = glm::vec3(0.0f);
-        lightInfo.radius = 1.0f;
+        lightInfo.position = glm::vec3(Rand01() * 20 -10, Rand01() * 3, Rand01() * 20 - 10);
+        lightInfo.color = glm::vec3(Rand01(), Rand01(), Rand01());
+        lightInfo.radius = Rand01() + 3;
 
         lights.push_back(lightInfo);
     }
@@ -113,10 +113,12 @@ void Lab2::Update(float deltaTimeSeconds)
 
     for (auto& l : lights)
     {
-        // TODO(student): Move the light sources in an orbit around the center of the scene.
+        // [DONE] TODO(student): Move the light sources in an orbit around the center of the scene.
         // The orbit is in the xoz plane. Compute rotationRadians for the current frame 
         // such that the light sources rotate 6 degrees/second. Use deltaTimeSeconds.
         float rotationRadians = 0.0f;
+        
+        rotationRadians += 6 * TO_RADIANS * deltaTimeSeconds;
 
         glm::mat4 rotateMatrix = glm::rotate(glm::mat4(1.0f), rotationRadians, glm::vec3(0, 1, 0));
         l.position = rotateMatrix * glm::vec4(l.position, 1.0f);
@@ -196,15 +198,21 @@ void Lab2::Update(float deltaTimeSeconds)
 
         for (auto& lightInfo : lights)
         {
-            // TODO(student): Set the shader uniforms 'light_position', 'light_color' and 'light_radius'
+            // [DONE] TODO(student): Set the shader uniforms 'light_position', 'light_color' and 'light_radius'
             // with the values from the light source. Use shader 'shader'.
-            
+                int loc_light_position = shader->GetUniformLocation("light_position");
+                glUniform3f(loc_light_position, lightInfo.position.x, lightInfo.position.y, lightInfo.position.z);
 
+                int loc_light_color = shader->GetUniformLocation("light_color");
+                glUniform3f(loc_light_color, lightInfo.color.x, lightInfo.color.y, lightInfo.color.z);
 
-            // TODO(student): Draw the mesh "sphere" at the position of the light source
+                int loc_light_radius = shader->GetUniformLocation("light_radius");
+                glUniform1f(loc_light_radius, lightInfo.radius);
+
+            // [DONE] TODO(student): Draw the mesh "sphere" at the position of the light source
             // and scaled 2 times the light source radius.
             // Use RenderMesh(mesh, shader, position, scale). Use shader 'shader'.
-
+            RenderMesh(meshes["sphere"], shader, lightInfo.position, glm::vec3(lightInfo.radius * 2.0f));
         }
 
         glDisable(GL_CULL_FACE);
