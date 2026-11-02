@@ -4,14 +4,19 @@
 // TODO(student): First, generate a curve (via line strip),
 // then a rotation/translation surface (via triangle strip)
 layout(lines) in;
-layout(line_strip, max_vertices = 256) out;
+layout(triangle_strip, max_vertices = 256) out;
 
 // Uniform properties
 uniform mat4 View;
 uniform mat4 Projection;
 uniform vec3 control_p0, control_p1, control_p2, control_p3;
 uniform int no_of_instances;
-// TODO(student): Declare any other uniforms here
+
+// [DONE] TODO(student): Declare any other uniforms here
+uniform int no_of_generated_points;
+uniform float max_translate;
+uniform float max_rotate;
+uniform int surface_type;
 
 // Input
 in int instance[2];
@@ -63,12 +68,32 @@ void main()
     const int SURFACE_TYPE_ROTATION     = 0;
     const int SURFACE_TYPE_TRANSLATION  = 1;
 
-    // TODO(student): Rather than emitting vertices for the control
-    // points, you must emit vertices that approximate the curve itself.
-    gl_Position = Projection * View * vec4(control_p0, 1);   EmitVertex();
-    gl_Position = Projection * View * vec4(control_p1, 1);   EmitVertex();
-    gl_Position = Projection * View * vec4(control_p2, 1);   EmitVertex();
-    gl_Position = Projection * View * vec4(control_p3, 1);   EmitVertex();
+    // Each instance draws one band between two adjacent curves. The bands
+    // together cover max_rotate (rotation) or max_translate (translation).
+    float band_angle = max_rotate / no_of_instances;
+    float band_width = max_translate / no_of_instances;
+    float angle_a = instance[0] * band_angle;
+    float angle_b = (instance[0] + 1) * band_angle;
+    float offset_a = instance[0] * band_width;
+    float offset_b = (instance[0] + 1) * band_width;
+
+    // Sample both ends of the curve, so t goes from 0 to 1 inclusive
+    float step = 1.0 / (no_of_generated_points - 1);
+    for (int i = 0; i < no_of_generated_points; i++) {
+        vec3 p = bezier(i * step);
+        vec3 pa, pb;
+
+        if (surface_type == SURFACE_TYPE_ROTATION) {
+            pa = rotateY(p, angle_a);
+            pb = rotateY(p, angle_b);
+        } else {
+            pa = translateX(p, offset_a);
+            pb = translateX(p, offset_b);
+        }
+
+        gl_Position = Projection * View * vec4(pa, 1);   EmitVertex();
+        gl_Position = Projection * View * vec4(pb, 1);   EmitVertex();
+    }
     EndPrimitive();
 
 }

@@ -34,5 +34,6 @@ namespace m2
         glm::vec3 control_p0, control_p1, control_p2, control_p3;
         unsigned int no_of_generated_points, no_of_instances;
         float max_translate, max_rotate;
+        int surface_type;   // 0 = rotation surface, 1 = translation surface
     };
 }   // namespace m2

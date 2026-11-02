@@ -46,6 +46,7 @@ void Lab4::Init()
     no_of_instances = 5;                    // number of instances (number of curves that contain the surface)
     max_translate = 8.0f;                   // for the translation surface, it's the distance between the first and the last curve
     max_rotate = glm::radians(360.0f);      // for the rotation surface, it's the angle between the first and the last curve
+    surface_type = 0;                       // 0 = rotation surface, 1 = translation surface (toggle with T)
 
     // Define control points
     control_p0 = glm::vec3(-4.0, -2.5,  1.0);
@@ -128,11 +129,16 @@ void Lab4::Update(float deltaTimeSeconds)
     glUniform3f(glGetUniformLocation(shader->program, "control_p3"), control_p3.x, control_p3.y, control_p3.z);
     glUniform1i(glGetUniformLocation(shader->program, "no_of_instances"), no_of_instances);
 
-    // TODO(student): Send to the shaders the number of points that approximate
+    // [DONE] TODO(student): Send to the shaders the number of points that approximate
     // a curve (no_of_generated_points), as well as the characteristics for
     // creating the translation/rotation surfaces (max_translate, max_rotate).
     // NOTE: If you're feeling lost and need a frame of reference while doing
     // this lab, go to `FrameEnd()` and activate `DrawCoordinateSystem()`.
+
+    glUniform1i(glGetUniformLocation(shader->program, "no_of_generated_points"), no_of_generated_points);
+    glUniform1f(glGetUniformLocation(shader->program, "max_translate"), max_translate);
+    glUniform1f(glGetUniformLocation(shader->program, "max_rotate"), max_rotate);
+    glUniform1i(glGetUniformLocation(shader->program, "surface_type"), surface_type);
 
     Mesh* mesh = meshes["surface"];
 
@@ -143,7 +149,7 @@ void Lab4::Update(float deltaTimeSeconds)
 
 void Lab4::FrameEnd()
 {
-#if 0
+#if 1
     DrawCoordinateSystem();
 #endif
 }
@@ -199,10 +205,33 @@ void Lab4::OnInputUpdate(float deltaTime, int mods)
 
 void Lab4::OnKeyPress(int key, int mods)
 {
-    // TODO(student): Use keys to change the number of instances and the
+    // [DONE] TODO(student): Use keys to change the number of instances and the
     // number of generated points. Avoid the camera keys, and avoid the
     // the keys from `OnInputUpdate`.
+        if (window->KeyHold(GLFW_KEY_LEFT_BRACKET) && no_of_generated_points > 2)
+        {
+                no_of_generated_points--;
+        }
+        
+        if (window->KeyHold(GLFW_KEY_RIGHT_BRACKET))
+        {
+                no_of_generated_points++;
+        }
+        
+        if (window->KeyHold(GLFW_KEY_COMMA) && no_of_instances > 0)
+        {
+                no_of_instances--;
+        }
+        
+        if (window->KeyHold(GLFW_KEY_PERIOD))
+        {
+                no_of_instances++;
+        }
 
+        if (key == GLFW_KEY_T)
+        {
+                surface_type = 1 - surface_type;
+        }
 }
 
 
