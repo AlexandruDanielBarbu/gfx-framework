@@ -53,4 +53,23 @@ void main()
     // Hint: if a point has the coordinates (0,0), then the quad will have the following coords:
     // (-ds,-ds), (ds,-ds), (ds,ds)....
 
+    vec2 pos_0 = vec2(-ds,-ds);
+    geom_lifetime = vert_lifetime[0];
+    geom_iLifetime = vert_iLifetime[0];
+    texture_coord = vec2(0,0);
+    EmitPoint(pos_0);
+
+    vec2 pos_1 = vec2( ds,-ds);
+    texture_coord = vec2(0,1);
+    EmitPoint(pos_1);
+
+    vec2 pos_2 = vec2( ds, ds);
+    texture_coord = vec2(1,1);
+    EmitPoint(pos_2);
+
+    vec2 pos_3 = vec2(-ds, ds);
+    texture_coord = vec2(1,0);
+    EmitPoint(pos_3);
+
+    EndPrimitive();
 }

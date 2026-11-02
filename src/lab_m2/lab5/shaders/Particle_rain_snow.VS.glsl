@@ -51,7 +51,7 @@ void main()
         return;
     }
 
-    // TODO(student): Compute the new position as the sum
+    // [X] TODO(student): Compute the new position as the sum
     // between the actual position and the speed.
     //
     // Because the y coordinate is already set negative since the
@@ -62,6 +62,7 @@ void main()
     // the speed must be multiplied with deltaTime.
 
     spd = spd - vec3(0, 0.9, 0) * deltaTime;
+    pos += spd * deltaTime;
 
     if(pos.y < (-20 + rand(pos.xy) * 10))
     {
