@@ -23,6 +23,43 @@ vec4 grayscale()
     return vec4(gray, gray, gray,  0);
 }
 
+const int MAX_KERNEL_SIZE = 3;
+vec4 median(const int kernelSize)
+{
+    vec4 values[MAX_KERNEL_SIZE * MAX_KERNEL_SIZE];
+    vec2 texelSize = 1.0 / screenSize;
+    int idx = 0;
+
+    // extract values
+    for(int k = -kernelSize/2; k <= kernelSize/2; k++)
+    {
+        for(int l = -kernelSize/2; l <= kernelSize/2; l++)
+        {
+            values[idx] = texture(textureImage, textureCoord + vec2(k,l) * texelSize);
+            idx++;
+        }
+    }
+
+    // sort values
+    for(int k = 0; k < kernelSize * kernelSize; k++)
+    {
+        for(int l = k; l < kernelSize * kernelSize; l++)
+        {
+            float s1 = values[k].x + values[k].y + values[k].z; 
+            float s2 = values[l].x + values[l].y + values[l].z; 
+                    
+            if (s1 > s2){
+                vec4 tmp = values[k];
+                values[k] = values[l];
+                values[l] = tmp;
+            }
+        }
+    }
+
+    // update values
+    vec4 med = values[kernelSize * kernelSize / 2];
+    return med;
+}
 
 vec4 blur(int blurRadius)
 {
@@ -54,6 +91,12 @@ void main()
         case 2:
         {
             out_color = blur(3);
+            break;
+        }
+
+        case 3:
+        {
+            out_color = median(3);
             break;
         }
 

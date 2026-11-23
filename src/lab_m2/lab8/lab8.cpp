@@ -31,7 +31,7 @@ Lab8::~Lab8()
 
 void Lab8::Init()
 {
-    // Load default texture fore imagine processing
+    // Load default texture for imagine processing
     originalImage = TextureManager::LoadTexture(PATH_JOIN(window->props.selfDir, RESOURCE_PATH::TEXTURES, "cube", "pos_x.png"), nullptr, "image", true, true);
     processedImage = TextureManager::LoadTexture(PATH_JOIN(window->props.selfDir, RESOURCE_PATH::TEXTURES, "cube", "pos_x.png"), nullptr, "newImage", true, true);
 
@@ -213,7 +213,7 @@ void Lab8::OnKeyPress(int key, int mods)
         cout << "Processing on GPU: " << (gpuProcessing ? "true" : "false") << endl;
     }
 
-    if (key - GLFW_KEY_0 >= 0 && key < GLFW_KEY_3)
+    if (key - GLFW_KEY_0 >= 0 && key <= GLFW_KEY_3)
     {
         outputMode = key - GLFW_KEY_0;
 
